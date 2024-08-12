@@ -1,0 +1,296 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
+
+
+:root {
+    --color-a: #3862a1;
+    --color-b: #59a9ce;
+    --color-c: #1a7feb;
+
+
+    --color-warning: #992121;
+
+    --gray-white: #fafafa;
+    --gray-max: #f0f0f0;
+    --gray-light: #e7e7e7;
+    --gray-med: #e2e2e2;
+    --gray-dark: #c7c7c7;
+    --gray-min: #adadad;
+
+    --shadow-item: 0px 1px 8px #00000044;
+
+    --radius: 8px;
+
+}
+
+
+.main-page {
+    color: black;
+    background-color: rgb(180, 17, 17);
+    font-family: 'Roboto', sans-serif;
+}
+
+.vert-layout {
+    /* The display property is set to "flex" to enable flexbox layout. */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.vert-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Optional: Center the children horizontally */
+    width: 100%;
+    /* Optional: Add some padding */
+    box-sizing: border-box;
+    background-color: var(--gray-max);
+}
+
+.vert-pad {
+    width: 80%;
+    height: fit-content;
+    align-items: center;
+    text-align: center;
+}
+
+.header {
+    background: linear-gradient(180deg, var(--color-a) 0%, var(--color-b) 96%);
+    position: relative;
+    height: 10vh;
+    width: 100%;
+    box-shadow: 0px 0.0vh 1vh #00000044;
+}
+
+.footer {
+    background: linear-gradient(0deg, var(--color-a) 0%, var(--color-b) 96%);
+    position: relative;
+    height: 10vh;
+    width: 100%;
+    box-shadow: 0px 0.0vh 0.5vh #00000044;
+}
+
+.title {
+    position: relative;
+    width: 100%;
+    height: fit-content;
+    color: #000000;
+    font-weight: 500;
+    text-align: center;
+    text-shadow: 0px 0.1vw 0.3vw #00000077;
+    font-size: min(max(8px, 10vw), 100px);
+}
+
+
+@media (min-width: 1200px) and (min-aspect-ratio: 5/3) {
+    .title {
+        font-size: min(max(1px, 4vw), 200px);
+    }
+}
+
+
+.slogan {
+    position: relative;
+    width: 100%;
+    height: fit-content;
+    font-weight: 400;
+    color: #000000;
+    text-align: center;
+    text-shadow: 0px 0.05vw 0.2vw #00000077;
+    padding-bottom: 1vw;
+    font-size: min(max(16px, 3vw), 40px);
+}
+
+
+@media (min-width: 1200px) and (min-aspect-ratio: 5/3) {
+    .slogan {
+        font-size: min(max(16px, 1.5vw), 100px);
+    }
+}
+
+.intro {
+    position: relative;
+    width: 100%;
+    padding-bottom: 1vw;
+}
+
+.intro-text {
+    font-weight: 300;
+    position: relative;
+    width: 100%;
+    height: fit-content;
+    color: #5e5e5e;
+    text-align: center;
+    text-shadow: 0px 0.01vw 0.1vw #00000022;
+    font-size: min(max(16px, 3vw), 40px);
+}
+
+
+@media (min-width: 1200px) and (min-aspect-ratio: 5/3) {
+    .intro-text {
+        font-size: min(max(16px, 1vw), 100px);
+    }
+}
+
+
+.disclaimer {
+    display: flex;
+    align-items: center;
+    padding-bottom: 3vw;
+}
+
+.disclaimer-icon {
+    width: min(max(64px, 4vw), 128px);
+    height: min(max(64px, 4vw), 128px);
+    flex-shrink: 0;
+    background-color: var(--color-warning);
+    border-radius: var(--radius);
+    margin-right: 1vw;
+    margin-left: 0.2vw;
+    box-shadow: var(--shadow-item);
+}
+
+.disclaimer-text {
+    margin-left: 0.5em;
+    font-weight: 200;
+    color: #a0a0a0;
+    text-align: left;
+    text-shadow: 0px 0.01vw 0.1vw #00000022;
+    font-size: min(max(12px, 2vw), 32px);
+}
+
+
+@media (min-width: 1200px) and (min-aspect-ratio: 5/3) {
+    .disclaimer-text {
+        font-size: min(max(12px, 0.6vw), 20px);
+    }
+}
+
+
+
+/* Container styling */
+.text-entry-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: fit-content;
+}
+
+/* Textarea styling */
+.text-entry {
+    width: 100%;
+
+    color : rgb(31, 31, 31);
+    background-color: rgb(255, 255, 255);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-item);
+
+    resize: none;
+    overflow-y: auto;
+
+    padding: min(max(8px, 1.5vw), 24px);
+    font-size: min(max(16px, 2vw), 24px);
+
+    height: min(max(150px, 24vw), 300px);
+}
+
+@media (min-width: 1200px) and (min-aspect-ratio: 5/3) {
+    .text-entry {
+        padding: 20px;
+        font-size: min(max(16px, 0.6vw), 20px);
+        height: min(max(1px, 16vw), 300px);
+    }
+}
+
+
+
+/* FetchButton.css */
+.button-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.fetch-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: var(--color-c);
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: var(--shadow-item);
+}
+
+
+.fetch-button:hover {
+    background-color: #0056b3;
+}
+
+.fetch-button:active {
+    background-color: #004085;
+}
+
+.content {
+    margin-top: 20px;
+    font-size: 18px;
+    color: #333;
+}
+
+
+
+
+
+body,
+html,
+.container {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+
+.container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.left-placeholder,
+.right-placeholder {
+    background-color: lightgray;
+    width: 40%;
+    /* Slimmer width */
+    display: none;
+    /* Hide by default */
+}
+
+.main-content {
+    background-color: white;
+    width: 100%;
+    /* Default to full width */
+    overflow-y: auto;
+    /* Make it scrollable */
+}
+
+@media (min-width: 1200px) and (min-aspect-ratio: 5/3) {
+
+    .left-placeholder,
+    .right-placeholder {
+        display: block;
+        /* Show the placeholders */
+    }
+
+    .container {
+        justify-content: space-between;
+        /* Ensure proper spacing */
+    }
+
+    .main-content {
+        width: 60%;
+        /* Adjusted width to match the slimmer placeholders */
+    }
+}
