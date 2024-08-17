@@ -31,6 +31,7 @@ def find_closest_env_file(start_path, max_depth):
         current_path = parent_path
     
     return None
+
 def load_env_file(env_file_path):
     """
     Load environment variables from the specified .env file.

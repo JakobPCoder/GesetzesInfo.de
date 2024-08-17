@@ -20,7 +20,7 @@ def search(request):
 
     results = {
         'query': query,
-        'results': [],      
+        'results': []      
     }
 
     if not query or query.strip() == "":
@@ -30,10 +30,11 @@ def search(request):
         results["error"] = "Please enter at least 3 characters"
         return JsonResponse(results)
     
+    result_list = [{"id": 1, "title": "Title 1", "text": "Text 1"},
+                    {"id": 2, "title": "Title 2", "text": "Text 2"},
+                    {"id": 3, "title": "Title 3", "text": "Text 3"}]
 
     results["query"] = query
-    results["results"] = [{"id": 1, "title": "Title 1", "text": "Text 1"},
-                    {"id": 2, "title": "Title 2", "text": "Text 2"},
-                    {"id": 3, "title": "Title 3", "text": "Text 3"}],
+    results["results"] = result_list
     
     return JsonResponse(results)

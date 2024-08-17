@@ -116,7 +116,7 @@ export function Search() {
 
         console.log('Button clicked. Fetching data...');
 
-        fetch(`http://localhost:8000/api/search?q=${encodeURIComponent(text)}`)
+        fetch(`http://localhost:${encodeURIComponent(PORT)}/api/search?q=${encodeURIComponent(text)}`) 
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -127,6 +127,7 @@ export function Search() {
                 if (data.error) {
                     throw new Error(data.error);
                 }
+                console.log(data);
                 // Validate that the data is an object of the expected shape
                 if (data && Array.isArray(data.results)) {
                     const validItems = data.results.filter(item => 
