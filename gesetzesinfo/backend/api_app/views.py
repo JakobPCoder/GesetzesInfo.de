@@ -20,7 +20,6 @@ def search(request):
 
     results = {
         'query': query,
-        'error': None,
         'results': [],      
     }
 

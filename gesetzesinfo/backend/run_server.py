@@ -8,23 +8,29 @@ MAX_RECURSION_DEPTH = 16
 
 def find_closest_env_file(start_path, max_depth):
     """
-    Recursively search for the closest .env file up to a specified depth.
+    Search for the closest .env file up to a specified depth.
 
-    :param start_path: The starting directory for the search
-    :param max_depth: The maximum recursion depth
-    :return: The path to the closest .env file, or None if not found
+    :param start_path: The starting directory for the search.
+    :param max_depth: The maximum recursion depth.
+    :return: The path to the closest .env file, or None if not found within the depth.
     """
-    current_path = start_path
+    current_path = os.path.abspath(start_path)  # Ensure we start with an absolute path
+
     for _ in range(max_depth):
         env_path = os.path.join(current_path, '.env')
         if os.path.isfile(env_path):
             return env_path
-        parent_path = os.path.dirname(current_path)
-        if parent_path == current_path:  # Reached root directory
-            break
-        current_path = parent_path
-    return None
 
+        # Move to the parent directory
+        parent_path = os.path.dirname(current_path)
+        
+        # If we have reached the root directory, stop searching
+        if parent_path == current_path:
+            break
+        
+        current_path = parent_path
+    
+    return None
 def load_env_file(env_file_path):
     """
     Load environment variables from the specified .env file.
