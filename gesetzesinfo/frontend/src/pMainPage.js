@@ -5,6 +5,8 @@ import './ItemList.css';
 import ItemList from './ItemList';
 
 
+const PORT = 8000;
+
 export function VerticalLayout({ children }) {
     return (
         <div className="vert-layout">
@@ -75,6 +77,32 @@ export function Disclaimer(props) {
 }
 
 
+export function TextEntryContainer(props) {
+    const { text, setText } = props;
+  
+    return (
+      <div className="text-entry-container">
+        <textarea
+          className="text-entry"
+          value={text}
+          onChange={(event) => setText(event.target.value)}
+          placeholder="Gib hier deine Frage ein, oder beschreibe deine Situation..."
+        />
+      </div>
+    );
+  }
+
+
+export function FetchButton(props) {
+    const { text, onClick } = props;
+  
+    return (
+        <div className="button-container">
+        <button className="fetch-button" onClick={onClick}>{props.text}</button>
+    </div>
+    );
+  }
+
 export function Search() {
     const [text, setText] = useState('');
     const [items, setItems] = useState([]); // Renamed from 'content' to 'items'
@@ -85,9 +113,10 @@ export function Search() {
     };
 
     const handleClick = () => {
+
         console.log('Button clicked. Fetching data...');
 
-        fetch(`http://localhost:3001/api/search?q=${encodeURIComponent(text)}`)
+        fetch(`http://localhost:8000/api/search?q=${encodeURIComponent(text)}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -95,38 +124,29 @@ export function Search() {
                 return response.json(); // Parse response as JSON
             })
             .then(data => {
-                // Validate that the data is an array and contains the right fields
-                if (Array.isArray(data)) {
-                    const validItems = data.filter(item => 
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                // Validate that the data is an object of the expected shape
+                if (data && Array.isArray(data.results)) {
+                    const validItems = data.results.filter(item => 
                         item.id && item.title && item.text
                     );
                     setItems(validItems); // Set the validated items
                     setError(null); // Clear any previous error
                 } else {
-                    throw new Error('Data format is incorrect');
+                    throw new Error('Search response data format is incorrect');
                 }
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
-                setError('Failed to fetch data. Please try again.');
+                setError(`${error}`);
             });
     };
-
     return (
-        <div className="text-and-fetch-button-container">
-            <div className="text-entry-container">
-                <textarea
-                    className="text-entry"
-                    value={text}
-                    onChange={handleChange}
-                    placeholder="Gib hier deine Frage ein, oder beschreibe deine Situation..."
-                />
-            </div>
-
-            <div className="button-container">
-                <button className="fetch-button" onClick={handleClick}>Fetch Content</button>
-            </div>
-
+        <div className="search-container">
+            <TextEntryContainer text={text} setText={setText} />
+            <FetchButton text="Suchen" onClick={handleClick} />
             {error && <div className="error-message">{error}</div>} {/* Display error if any */}
             <ItemList items={items} /> {/* Pass the items to ItemList */}
         </div>

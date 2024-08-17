@@ -1,0 +1,85 @@
+# Ignore environment variables
+.env
+
+# Ignore Python cache and build files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyd
+*.whl
+*.egg-info/
+*.eggs/
+*.dist-info/
+
+# Ignore Django migration files
+**/migrations/**
+
+# Ignore virtual environment directory
+venv/
+env/
+.venv/
+.env/
+
+# Ignore database files
+*.sqlite3
+
+# Ignore Django static files (generated during collectstatic)
+staticfiles/
+static/
+
+# Ignore media uploads (if stored in the repo, usually not recommended)
+media/
+
+# Ignore local settings files
+local_settings.py
+
+# Ignore logs
+*.log
+*.out
+*.err
+
+# Ignore compiled files
+*.o
+*.so
+*.a
+*.dll
+
+# Ignore node_modules directory (React)
+node_modules/
+
+# Ignore React build directory
+build/
+
+# Ignore npm and yarn debug log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore lock files (depending on your package manager)
+package-lock.json
+yarn.lock
+
+# Ignore coverage reports
+coverage/
+*.cover
+*.coveragerc
+htmlcov/
+
+# Ignore any macOS generated files
+.DS_Store
+
+# Ignore VSCode configuration files
+.vscode/
+
+# Ignore JetBrains IDEs config files (like PyCharm, WebStorm)
+.idea/
+
+# Ignore OS and Editor swap files
+*.swp
+*.swo
+*~
+
+# Ignore docker-related files (if using Docker)
+docker-compose.override.yml
+.docker/

@@ -23,7 +23,7 @@
 }
 
 .list-item-id {
-    width: 5vw; /* Match the width with the header */
+    width: var(--result-list-id-spacing); /* Match the width with the header */
     text-align: right;
     font-weight: bold;
     margin-right: 8px;
@@ -32,7 +32,7 @@
 .list-item-title {
     flex-grow: 1;
     text-align: left;
-    padding-left: 5%; /* Match the padding with the header */
+    padding-left: var(--result-list-id-spacing); /* Match the padding with the header */
 }
 
 .triangle {
@@ -52,16 +52,37 @@
 }
 
 .list-item-content {
-    background-color: var(--gray-white);
-    white-space: pre-wrap;
-    font-size: 14px;
-    max-height: 0px;
-    transition: max-height 0.2s ease-out, padding 0.1s ease-out, font-size 0.1s ease-out;
-}
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 
+
+    background-color: var(--gray-white);
+    max-height: 0px;
+    transition: max-height 0.1s ease-out;
+
+}
 .list-item-content.expanded {
     border-top: 1px solid var(--gray-min);
-    max-height: 400px;
+    max-height: 1000px;
     font-size: 14px;
-    transition: max-height 0.2s ease-out, padding 0.1s ease-out, font-size 0.1s ease-out;
+    transition: max-height 0.1s ease-in;
 }
+
+
+.list-item-content-text {
+    white-space: pre-wrap;
+    overflow-y:  auto;
+    font-size: 14px;
+    padding: 24px;
+}
+
+.list-item-interaction-bar {
+    width: 100%;
+    height: 50px;
+
+    background-color: #444444;
+
+}
+
+

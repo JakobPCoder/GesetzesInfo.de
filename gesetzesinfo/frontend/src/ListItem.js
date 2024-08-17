@@ -17,7 +17,8 @@ function ListItem({ id, title, text }) {
             </div>
             {(
                 <div className={`list-item-content ${isExpanded ? 'expanded' : ''}`}> 
-                    {text}
+                    <div className='list-item-content-text'>{text}</div>
+                    <div className='list-item-interaction-bar'></div>
                 </div>
             )}
         </div>
