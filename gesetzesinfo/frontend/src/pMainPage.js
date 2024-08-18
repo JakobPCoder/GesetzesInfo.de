@@ -115,7 +115,7 @@ export function Search() {
 
     const handleClick = () => {
 
-        const query = `http://${encodeURIComponent(IP)}:${encodeURIComponent(PORT)}/api/search?q=${encodeURIComponent(text)}`;
+        const query = `https://${encodeURIComponent(IP)}:${encodeURIComponent(PORT)}/api/search?q=${encodeURIComponent(text)}`;
 
         console.log('Button clicked. Fetching data...');
         console.log(query);
