@@ -6,7 +6,7 @@ import ItemList from './ItemList';
 
 
 const PORT = 8000;
-const IP = "85.215.216.176 "; // 85.215.216.176  //127.0.0.1
+const IP = "85.215.216.176"; // 85.215.216.176  //127.0.0.1
 
 export function VerticalLayout({ children }) {
     return (
@@ -115,8 +115,11 @@ export function Search() {
 
     const handleClick = () => {
 
+        const query = `http://${encodeURIComponent(IP)}:${encodeURIComponent(PORT)}/api/search?q=${encodeURIComponent(text)}`;
+
         console.log('Button clicked. Fetching data...');
-        fetch(`http://${encodeURIComponent(IP)}:${encodeURIComponent(PORT)}/api/search?q=${encodeURIComponent(text)}`) 
+        console.log(query);
+        fetch(query) 
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');

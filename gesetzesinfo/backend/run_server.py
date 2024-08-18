@@ -66,7 +66,7 @@ def start_django_server(port):
         manage_py_path = os.path.join(script_dir, 'manage.py')
 
         # Construct the command to start the Django server
-        command = ["python", manage_py_path, "runserver", f"{port}"]
+        command = ["python", manage_py_path, "runserver", f"0.0.0.0:{port}"]
 
         print(f"Starting Django server with command: {' '.join(command)}")
         subprocess.run(command, check=True)
