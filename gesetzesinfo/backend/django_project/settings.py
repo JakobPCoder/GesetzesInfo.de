@@ -58,6 +58,10 @@ CORS_ALLOWED_ORIGINS = [
     "https://gesetzesinfo.de",
 ]
 
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+
 ROOT_URLCONF = 'django_project.urls'
 
 TEMPLATES = [
