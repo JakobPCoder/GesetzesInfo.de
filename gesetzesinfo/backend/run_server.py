@@ -52,7 +52,7 @@ def get_django_server_port():
     """
     return os.getenv('PORT', '8000')
 
-def start_django_server(port):
+def start_django_server(hosting_ip, port):
     """
     Start the Django development server with the specified port.
 
@@ -66,7 +66,7 @@ def start_django_server(port):
         manage_py_path = os.path.join(script_dir, 'manage.py')
 
         # Construct the command to start the Django server
-        command = ["python", manage_py_path, "runserver", f"0.0.0.0:{port}"]
+        command = ["python", manage_py_path, "runserver", f"{hosting_ip}:{port}"]
 
         print(f"Starting Django server with command: {' '.join(command)}")
         subprocess.run(command, check=True)
@@ -85,10 +85,12 @@ def main():
     load_env_file(env_file)
 
     # Get the port for the Django server
-    port = get_django_server_port()
+    hosting_ip = os.getenv('HOSTING_IP', '127.0.0.1')
+    port = os.getenv('PORT', '8000')
+
 
     # Start the Django server
-    start_django_server(port)
+    start_django_server(hosting_ip, port)
 
 if __name__ == "__main__":
     main()

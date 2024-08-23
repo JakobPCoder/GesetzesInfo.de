@@ -3,10 +3,12 @@ import React, { useState } from 'react';
 import './sMainPage.css';
 import './ItemList.css';
 import ItemList from './ItemList';
+import './ListItem.css';
+import AdsMobile from './ads';
 
 
 const PORT = 8000;
-const IP = "85.215.216.176"; // 85.215.216.176  //127.0.0.1
+const IP = "127.0.0.1"; // 85.215.216.176  //127.0.0.1
 
 export function VerticalLayout({ children }) {
     return (
@@ -115,7 +117,7 @@ export function Search() {
 
     const handleClick = () => {
 
-        const query = `https://${encodeURIComponent(IP)}:${encodeURIComponent(PORT)}/api/search?q=${encodeURIComponent(text)}`;
+        const query = `http://${encodeURIComponent(IP)}:${encodeURIComponent(PORT)}/api/search?q=${encodeURIComponent(text)}`;
 
         console.log('Button clicked. Fetching data...');
         console.log(query);
@@ -181,6 +183,7 @@ const MainPage = () => {
                             Wir stellen keine offizielle Rechtsberatung dar und übernehmen keinerlei Haftung! 
                             Die gezeigten Ergebnisse basieren mölicherweise auf mehrere Jahre alten Daten und sind, 
                             auch deswegen, nur als Orientierung zu betrachten." />
+                        <AdsMobile />
                         <Search />
                     </VerticalPad>
                 </VerticalLayout>

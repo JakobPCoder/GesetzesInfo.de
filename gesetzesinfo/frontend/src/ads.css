@@ -1,0 +1,14 @@
+
+
+.ads-container-mobile {
+    display: none;
+    background-color: aqua;
+    height: 200px;
+    margin-bottom: 50px;
+}
+
+@media (max-width: 1200px) or (max-aspect-ratio: 5/3) {
+    .ads-container-mobile {
+        display: block;
+    }
+}
