@@ -6,7 +6,6 @@
     --color-b: #59a9ce;
     --color-c: #1a7feb;
 
-
     --color-warning: #992121;
 
     --gray-white: #fafafa;
@@ -31,14 +30,6 @@
     font-family: 'Roboto', sans-serif;
 }
 
-.vert-layout {
-    /* The display property is set to "flex" to enable flexbox layout. */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    box-sizing: border-box;
-}
 
 .vert-layout {
     display: flex;
@@ -75,9 +66,8 @@
 }
 
 .title {
-    position: relative;
     width: 100%;
-    height: fit-content;
+    /* height: fit-content; */
     color: #000000;
     font-weight: 500;
     text-align: center;
@@ -88,7 +78,7 @@
 
 @media (min-width: 1200px) and (min-aspect-ratio: 5/3) {
     .title {
-        font-size: min(max(1px, 4vw), 200px);
+        font-size: min(max(48px, 4vw), 200px);
     }
 }
 
@@ -102,13 +92,13 @@
     text-align: center;
     text-shadow: 0px 0.05vw 0.2vw #00000077;
     padding-bottom: 1vw;
-    font-size: min(max(16px, 3vw), 40px);
+    font-size: min(max(18px, 3vw), 30px);
 }
 
 
 @media (min-width: 1200px) and (min-aspect-ratio: 5/3) {
     .slogan {
-        font-size: min(max(16px, 1.5vw), 100px);
+        font-size: min(max(16px, 1.3vw), 1060px);
     }
 }
 
@@ -126,13 +116,13 @@
     color: #5e5e5e;
     text-align: center;
     text-shadow: 0px 0.01vw 0.1vw #00000022;
-    font-size: min(max(16px, 2vw), 24px);
+    font-size: 16px;
 }
 
 
 @media (min-width: 1200px) and (min-aspect-ratio: 5/3) {
     .intro-text {
-        font-size: min(max(16px, 1vw), 24px);
+        font-size: 20px;
     }
 }
 
@@ -168,12 +158,12 @@
     color: #a0a0a0;
     text-align: left;
     text-shadow: 0px 0.01vw 0.1vw #00000022;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 @media (min-width: 1200px) and (min-aspect-ratio: 5/3) {
     .disclaimer-text {
-        font-size: 16;
+        font-size: 14px;
     }
 }
 

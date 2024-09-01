@@ -18,4 +18,10 @@ from django.http import HttpRequest
 from . import endpoints
 
 def search(request):
-    return endpoints.api_search(request)
+    return endpoints.search(request)
+
+def law_count(request):
+    return endpoints.law_count(request) 
+
+def keyword_count(request):
+    return endpoints.keyword_count(request)

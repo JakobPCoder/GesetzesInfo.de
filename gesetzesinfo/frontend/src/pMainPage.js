@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './sMainPage.css';
 import './ItemList.css';
 import ItemList from './ItemList';
@@ -8,7 +8,7 @@ import AdsMobile from './ads';
 
 
 const PORT = 8000;
-const IP = "127.0.0.1"; // 85.215.216.176  //127.0.0.1
+const IP = "localhost"; // 85.215.216.176  //127.0.0.1
 
 export function VerticalLayout({ children }) {
     return (
@@ -29,7 +29,7 @@ export function VerticalPad({ children }) {
 
 
 export function Header() {
-    return <div className="header" />;
+    return <div className="header"/>;
 };
 
 
@@ -79,6 +79,12 @@ export function Disclaimer(props) {
     </div>;
 }
 
+export function SearchHeader(props) {
+    return <div className="search-header">
+        <p>{props.count}</p>
+    </div>;
+}
+
 
 export function TextEntryContainer(props) {
     const { text, setText } = props;
@@ -106,55 +112,84 @@ export function FetchButton(props) {
     );
   }
 
+/**
+ * Search component that handles the search functionality.
+ * 
+ * @returns {JSX.Element} The Search component.
+ */
 export function Search() {
+    // State variables to store the search text, search results, and error.
     const [text, setText] = useState('');
     const [items, setItems] = useState([]); // Renamed from 'content' to 'items'
+    const [lawCount, setLawCount] = useState(0);
+
     const [error, setError] = useState(null); // For handling any errors
 
-    const handleChange = (event) => {
-        setText(event.target.value);
+
+    /**
+     * Event handler for the search button click event.
+     * Fetches the search results from the API and updates the state variables.
+     */
+
+    const updateLawCount = async () => {
+        try {
+            const response = await fetch(`http://${encodeURIComponent(IP)}:${encodeURIComponent(PORT)}/api/keywords/count/`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch law count');
+            }
+            const data = await response.json();
+            setLawCount(data.count);  // Assuming the API returns { count: number }
+        } catch (error) {
+            console.error('Error fetching law count:', error);
+            setError(`${error}`);
+        }
     };
 
-    const handleClick = () => {
+    // Fetch the law count when the component mounts
+    useEffect(() => {
+        updateLawCount();  // Initial load
+    }, []);  // Empty dependency array to run only once when component mounts
 
+        
+    const handleClick = () => {
         const query = `http://${encodeURIComponent(IP)}:${encodeURIComponent(PORT)}/api/search?q=${encodeURIComponent(text)}`;
 
-        console.log('Button clicked. Fetching data...');
-        console.log(query);
-        fetch(query) 
+        fetch(query)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                return response.json(); // Parse response as JSON
+                return response.json();
             })
             .then(data => {
                 if (data.error) {
                     throw new Error(data.error);
                 }
-                console.log(data);
-                // Validate that the data is an object of the expected shape
                 if (data && Array.isArray(data.results)) {
-                    const validItems = data.results.filter(item => 
-                        item.id && item.title && item.text
-                    );
-                    setItems(validItems); // Set the validated items
-                    setError(null); // Clear any previous error
+                    const validItems = data.results.filter(item => item.id && item.title && item.text);
+                    if (validItems.length === 0) {
+                        throw new Error('No results found');
+                    } else {
+                        setItems(validItems);
+                        setError(null);
+                    }
                 } else {
                     throw new Error('Search response data format is incorrect');
                 }
+                updateLawCount();  // Update law count after successful search
             })
             .catch(error => {
-                console.error('Error fetching data:', error);
+                console.error('Error:', error);
                 setError(`${error}`);
+                setItems([]);
             });
     };
     return (
         <div className="search-container">
+            <SearchHeader count={lawCount}/>
             <TextEntryContainer text={text} setText={setText} />
             <FetchButton text="Suchen" onClick={handleClick} />
-            {error && <div className="error-message">{error}</div>} {/* Display error if any */}
-            <ItemList items={items} /> {/* Pass the items to ItemList */}
+            <ItemList items={items} error={error} /> {/* Pass the items to ItemList */}
         </div>
     );
 }

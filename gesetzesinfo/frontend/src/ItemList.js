@@ -2,7 +2,7 @@ import React from 'react';
 import ListItem from './ListItem';
 import './ItemList.css';
 
-function ItemList({ items }) {
+function ItemList({ items, error }) {
     return (
         <div className="item-list-container">
             <div className="list-header">
@@ -20,7 +20,9 @@ function ItemList({ items }) {
                     />
                 ))
             ) : (
-                <div className="no-results">No results yet</div>
+                <div className="no-results">
+                    {error ? error : "No results yet"}
+                </div>
             )}
         </div>
     );
