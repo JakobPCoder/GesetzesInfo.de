@@ -2,12 +2,13 @@ import React from 'react';
 import ListItem from './ListItem';
 import './ItemList.css';
 
-function ItemList({ items, error }) {
+function ItemList({ items, error, query}) {
     return (
         <div className="item-list-container">
             <div className="list-header">
                 <div className="header-id">ID</div>
                 <div className="header-title">Title</div>
+                <div className="header-score">Score</div>
             </div>
             
             {items.length > 0 ? (
@@ -17,6 +18,8 @@ function ItemList({ items, error }) {
                         id={item.id}
                         title={item.title}
                         text={item.text}
+                        query={query}
+                        score={item.score}
                     />
                 ))
             ) : (

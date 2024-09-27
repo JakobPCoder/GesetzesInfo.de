@@ -1,0 +1,25 @@
+.button-container {
+    text-align: right;
+    margin: 0px;
+}
+
+.custom-button {
+    background-color: var(--base-color);
+    color: var(--text-color);
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border-radius: 8px;
+    transition: scale 0.1s ease, background-color 0.1s ease;
+    box-shadow: var(--shadow-item);
+}
+
+.custom-button:hover {
+    background-color: var(--hover-color);
+}
+
+.custom-button:active {
+    background-color: var(--active-color);
+    scale: 0.95;
+}

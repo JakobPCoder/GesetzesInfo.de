@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
+:root {
+    --color-a: #3862a1;
+    --color-b: #59a9ce;
+    --color-c: #1a7feb;
+
+    --color-warning: #992121;
+
+    --color-rating-positive: #219921;
+    --color-rating-negative: #992121;
+
+    --gray-white: #fafafa;
+    --gray-max: #f0f0f0;
+    --gray-light: #e7e7e7;
+    --gray-med: #e2e2e2;
+    --gray-dark: #c7c7c7;
+    --gray-min: #adadad;
+
+    --shadow-item: 0px 1px 8px #00000044;
+
+    --radius: 8px;
+
+    --result-list-id-spacing: max(32px, 5%);
+
+}

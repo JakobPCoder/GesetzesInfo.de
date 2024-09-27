@@ -1,14 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
 import './sMainPage.css';
-import './ItemList.css';
-import ItemList from './ItemList';
-import './ListItem.css';
-import AdsMobile from './ads';
+import ItemList from './components/ItemList/ItemList';
+import { AdsMobile } from './components/ads/ads';
+import { Button } from './components/Button/Button';
 
 
-const PORT = 8000;
-const IP = "localhost"; // 85.215.216.176  //127.0.0.1
+const BACKEND_PORT = process.env.BACKEND_PORT || 8000;
+const API_DOMAIN = process.env.API_DOMAIN || "localhost";
 
 export function VerticalLayout({ children }) {
     return (
@@ -63,6 +62,7 @@ export function Intro(props) {
 
 export function DisclaimerIcon() {
     return <div className="disclaimer-icon">
+        
     </div>;
 }
 
@@ -99,18 +99,7 @@ export function TextEntryContainer(props) {
         />
       </div>
     );
-  }
-
-
-export function FetchButton(props) {
-    const { text, onClick } = props;
-  
-    return (
-        <div className="button-container">
-        <button className="fetch-button" onClick={onClick}>{props.text}</button>
-    </div>
-    );
-  }
+}
 
 /**
  * Search component that handles the search functionality.
@@ -133,7 +122,7 @@ export function Search() {
 
     const updateLawCount = async () => {
         try {
-            const response = await fetch(`http://${encodeURIComponent(IP)}:${encodeURIComponent(PORT)}/api/keywords/count/`);
+            const response = await fetch(`http://${encodeURIComponent(API_DOMAIN)}:${encodeURIComponent(BACKEND_PORT)}/api/laws/count_raw/`);
             if (!response.ok) {
                 throw new Error('Failed to fetch law count');
             }
@@ -152,7 +141,7 @@ export function Search() {
 
         
     const handleClick = () => {
-        const query = `http://${encodeURIComponent(IP)}:${encodeURIComponent(PORT)}/api/search?q=${encodeURIComponent(text)}`;
+        const query = `http://${encodeURIComponent(API_DOMAIN)}:${encodeURIComponent(BACKEND_PORT)}/api/search?q=${encodeURIComponent(text)}`;
 
         fetch(query)
             .then(response => {
@@ -166,11 +155,12 @@ export function Search() {
                     throw new Error(data.error);
                 }
                 if (data && Array.isArray(data.results)) {
-                    const validItems = data.results.filter(item => item.id && item.title && item.text);
+                    const validItems = data.results.filter(item => item.id && item.title && item.text && (item.score !== undefined && item.score !== null));
                     if (validItems.length === 0) {
                         throw new Error('No results found');
                     } else {
-                        setItems(validItems);
+                        const replaceIds = (items) => items.map((item, idx) => ({ ...item, id: idx + 1 }));
+                        setItems(replaceIds(validItems));
                         setError(null);
                     }
                 } else {
@@ -188,8 +178,8 @@ export function Search() {
         <div className="search-container">
             <SearchHeader count={lawCount}/>
             <TextEntryContainer text={text} setText={setText} />
-            <FetchButton text="Suchen" onClick={handleClick} />
-            <ItemList items={items} error={error} /> {/* Pass the items to ItemList */}
+            <Button text="Suchen" onClick={handleClick} />
+            <ItemList items={items} error={error} query = {text} /> {/* Pass the items to ItemList */}
         </div>
     );
 }
@@ -214,7 +204,7 @@ const MainPage = () => {
                             desto präziser die Antwort. Wir stellen kein offizielle Rechtsberatung dar und übernehmen keine Haftung! 
                             In jedem Fall ist es sinnvoll professionelle Beratung durch einen Anwalt hinzuziehen." />
                         <Disclaimer text = 
-                            "Wir stellen ausschließlich Informationen bereit, um Ihnen zu helfen ihre Situation besser zu verstehen und einen besseren Überblick zu erhalten. 
+                            "Wir stellen ausschließlich Informationen bereit, um Ihnen zu helfen ihre Situation besser zu verstehen und einen besseren Überblick zu erhalten.
                             Wir stellen keine offizielle Rechtsberatung dar und übernehmen keinerlei Haftung! 
                             Die gezeigten Ergebnisse basieren mölicherweise auf mehrere Jahre alten Daten und sind, 
                             auch deswegen, nur als Orientierung zu betrachten." />

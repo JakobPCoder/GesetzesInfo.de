@@ -3,7 +3,6 @@ import os
 import requests
 from typing import List
 
-from .models import Law, LawWordDefinition, OldTitleKeyword
 from django.db import IntegrityError
 from openai import OpenAI, LengthFinishReasonError
 from pydantic import BaseModel
@@ -138,59 +137,59 @@ def law_search(query_title: str = None, query_text: str = None, book_code: str =
 
 
 
-def consume_old_laws(laws_data: list):
-    laws_to_create = []
-    for law_data in laws_data:
-        law = validate_new_old_law(law_data)
-        if law:
-            laws_to_create.append(law)
+# def consume_old_laws(laws_data: list):
+#     laws_to_create = []
+#     for law_data in laws_data:
+#         law = validate_new_old_law(law_data)
+#         if law:
+#             laws_to_create.append(law)
 
-    if not laws_to_create:
-        logging.info("No new laws were created")
-        return
+#     if not laws_to_create:
+#         logging.info("No new laws were created")
+#         return
     
-    try:
-        Law.objects.bulk_create(laws_to_create)
-        logging.info(f"Created {len(laws_to_create)} laws in the database")
-    except IntegrityError:
-        logging.error("Failed to create laws in the database")
+#     try:
+#         Law.objects.bulk_create(laws_to_create)
+#         logging.info(f"Created {len(laws_to_create)} laws in the database")
+#     except IntegrityError:
+#         logging.error("Failed to create laws in the database")
 
 
-def validate_new_old_law(law_data: dict):
-    external_id = law_data.get('id', None)
+# def validate_new_old_law(law_data: dict):
+#     external_id = law_data.get('id', None)
 
-    if not external_id:
-        logging.error("No external id found in law data")
-        return None
+#     if not external_id:
+#         logging.error("No external id found in law data")
+#         return None
     
-    # Check if the law already exists
-    if Law.objects.filter(external_id=external_id).exists():
-        logging.info(f"Law {external_id} already exists in the database")
-        return None
+#     # Check if the law already exists
+#     if Law.objects.filter(external_id=external_id).exists():
+#         logging.info(f"Law {external_id} already exists in the database")
+#         return None
 
-    law = create_law_from_old_json(law_data)
+#     law = create_law_from_old_json(law_data)
 
-    if law:
-        return law
-    else:
-        logging.error("Failed to create law from old json")
-        return None
+#     if law:
+#         return law
+#     else:
+#         logging.error("Failed to create law from old json")
+#         return None
 
-def create_law_from_old_json(law_data: dict):
-     # Extract the main law information
-    external_id = law_data.get('id', None)
-    book_code = law_data.get('book_code', None)
-    title = law_data.get('title', None)
-    text = law_data.get('text', None)
+# def create_law_from_old_json(law_data: dict):
+#      # Extract the main law information
+#     external_id = law_data.get('id', None)
+#     book_code = law_data.get('book_code', None)
+#     title = law_data.get('title', None)
+#     text = law_data.get('text', None)
 
-    source_url = "https://de.openlegaldata.io/"
+#     source_url = "https://de.openlegaldata.io/"
 
-    if not external_id or not book_code or not title or not text:
-        logging.error("No external id, book code, title or text found in law data")
-        return None
+#     if not external_id or not book_code or not title or not text:
+#         logging.error("No external id, book code, title or text found in law data")
+#         return None
 
-    law = Law(external_id=external_id, book_code=book_code, title=title, text=text, source_url=source_url)
+#     law = Law(external_id=external_id, book_code=book_code, title=title, text=text, source_url=source_url)
 
-    return law
+#     return law
 
 

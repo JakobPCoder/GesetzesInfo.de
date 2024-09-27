@@ -1,6 +1,6 @@
 .item-list-container {
     width: 100%;
-    margin-top: 20px;
+    margin: 0px 0px;
     border-radius: var(--radius);
     overflow: hidden;
     margin-bottom: 2vh;
@@ -9,25 +9,28 @@
 }
 
 .list-header {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
+    display: grid;
+    grid-template-columns: 10px var(--result-list-id-spacing) 1fr 80px 40px;
+    padding: 10px 20px;
     background-color: var(--gray-dark);
     color: rgb(41, 41, 41);
     font-weight: bold;
 }
 
 .header-id {
-    width: var(--result-list-id-spacing); /* Assuming this is intentional for your design */
-    text-align: right;
-    margin-left: 4px;
+    text-align: center;
+    grid-column: 2;
 }
 
 .header-title {
-    flex-grow: 1;
     text-align: left;
-    margin-left: 4px;
-    padding-left: var(--result-list-id-spacing);
+    grid-column: 3;
+    padding-left: 16px;
+}
+
+.header-score {
+    text-align: center;
+    grid-column: 4;
 }
 
 .no-results {
