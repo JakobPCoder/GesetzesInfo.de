@@ -2,13 +2,15 @@
 import re
 
 
-def clear_query(query: str):
+def clear_text(query: str):
     # Strip whitespace and newlines from start and end
     query = query.strip()
     
-    # Replace multiple whitespaces with a single space, but keep other newlines intact
-
-    query = re.sub(r'[^\S\n]+', ' ', query)
+    # Replace multiple newlines with two newlines
+    query = re.sub(r'\n{4,}', '\n\n\n', query)
+    
+    # Replace multiple whitespaces with a single space
+    query = re.sub(r' {2,}', ' ', query)
     
     return query
 
@@ -29,7 +31,7 @@ def main():
     print("Original text:")
     print(example_text)
     
-    cleaned_text = clear_query(example_text)
+    cleaned_text = clear_text(example_text)
     
     print("\nCleaned text:")
     print(cleaned_text)

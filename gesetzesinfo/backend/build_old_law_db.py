@@ -4,6 +4,8 @@ import os
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 
+from api_app.util import clear_text
+
 # Add the project root to the Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -17,7 +19,7 @@ load_dotenv()
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Connect to the test database in the backend folder
-db_path = os.path.join(current_dir, 'test_db.sqlite3')
+db_path = os.path.join(current_dir, 'law_db.sqlite3')
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
@@ -40,8 +42,11 @@ search_queries = [
     "Grundgesetz",
     "BGB",
     "StGB",
-    "ZPO",
-    "StPO",
+    # "SGB",
+    # "HGB",
+    # "ZPO",
+    # "StPO",
+    # "StVO"
 ]
 
 # Set a high max_results value
@@ -81,12 +86,20 @@ async def main():
     # Deduplicate laws based on external_id
     unique_laws = {law['id']: law for law in all_laws}.values()
 
-    # Insert laws into the database
+    # Clear the text
+    print("Clearing the text...")
+    for law in unique_laws:
+        law['text'] = clear_text(law['text'])
+
+    # Clear the database completely
+    cursor.execute("DELETE FROM OpenLegalDataLaw")
+
+    # Insert or update laws in the database
     for law in unique_laws:
         cursor.execute('''
         INSERT OR IGNORE INTO OpenLegalDataLaw (external_id, book_code, title, text)
         VALUES (?, ?, ?, ?)
-        ''', (law['id'], law['book_code'], law['title'], law['text']))
+        ''', (str(law['id']), law['book_code'], law['title'], law['text']))
 
     # Commit the changes and close the connection
     conn.commit()

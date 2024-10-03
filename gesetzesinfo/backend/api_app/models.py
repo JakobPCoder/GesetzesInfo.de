@@ -109,40 +109,6 @@ class OpenLegalDataLawTest(models.Model):
     def __str__(self):
         return self.title
 
-def populate_test_laws():
-    if not settings.USE_TEST_DB:
-        print("Test database population skipped: USE_TEST_DB is False")
-        return
-
-    # Use the correct path for the test database
-    test_db_path = os.path.join(settings.BASE_DIR, 'test_db.sqlite3')
-    
-    if not os.path.exists(test_db_path):
-        print(f"Test database not found at {test_db_path}")
-        return
-
-    conn = sqlite3.connect(test_db_path)
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT external_id, book_code, title, text FROM OpenLegalDataLaw")
-    laws = cursor.fetchall()
-
-    # Clear existing data
-    OpenLegalDataLawTest.objects.all().delete()
-
-    # Bulk create new objects
-    OpenLegalDataLawTest.objects.bulk_create([
-        OpenLegalDataLawTest(
-            external_id=law[0],
-            book_code=law[1],
-            title=law[2],
-            text=law[3],
-            text_char=law[3][:1024]
-        ) for law in laws
-    ])
-
-    conn.close()
-    print(f"Populated {len(laws)} laws into OpenLegalDataLawTest")
 
 class OpenLegalDataLaw(models.Model):
        # Main Key
@@ -167,10 +133,7 @@ class Law(models.Model):
 
     # Main Key
     id = models.AutoField(primary_key=True)
-
-    # This was the id used on the openlegaldata api
-    external_id = models.IntegerField(unique=True)
-
+    
     # This was the book used on the openlegaldata api
     book_code = models.CharField(max_length=100)
 

@@ -104,7 +104,7 @@ export function TextEntryContainer(props) {
 /**
  * Search component that handles the search functionality.
  * 
- * @returns {JSX.Element} The Search component.
+ * @returns {React.JSX.Element} The Search component.
  */
 export function Search() {
     // State variables to store the search text, search results, and error.
@@ -208,7 +208,7 @@ const MainPage = () => {
                             Wir stellen keine offizielle Rechtsberatung dar und übernehmen keinerlei Haftung! 
                             Die gezeigten Ergebnisse basieren mölicherweise auf mehrere Jahre alten Daten und sind, 
                             auch deswegen, nur als Orientierung zu betrachten." />
-                        <AdsMobile />
+                        {/* <AdsMobile /> */}
                         <Search />
                     </VerticalPad>
                 </VerticalLayout>
