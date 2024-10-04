@@ -167,7 +167,7 @@ class EmbeddedLaw(models.Model):
     id = models.AutoField(primary_key=True)
 
     # This was the id used in tha Laws table
-    law_id = models.IntegerField(unique=True)
+    law_id = models.IntegerField()
 
     # This was the book used on the openlegaldata api
     book_code = models.CharField(max_length=100)
@@ -207,27 +207,44 @@ class EmbeddedLaw(models.Model):
 
     class Meta:
         # Additional options for the model
-        verbose_name = "Law"
-        verbose_name_plural = "Laws"
+        verbose_name = "Embedded Law"
+        verbose_name_plural = "Embedded Laws"
 
-
-class LawWordDefinition(models.Model):
-
-    # Main Key
+class SearchRequest(models.Model):
     id = models.AutoField(primary_key=True)
-
-    # What law this definition belongs to
-    law = models.ForeignKey(Law, on_delete=models.CASCADE)
-
-    word = models.CharField(max_length=128)
-
-    definition = models.TextField()
+    search_text = models.TextField() 
+    reduced_text_length = 1024
+    search_text_reduced = models.CharField(max_length=reduced_text_length, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.word} ({self.law.title})"
+        return f"{self.search_text}"
     
-    
-    
+    class Meta:
+        # Additional options for the model
+        verbose_name = "Search Request"
+        verbose_name_plural = "Search Requests"
+
+
+class Query(models.Model):
+
+    id = models.AutoField(primary_key=True)
+
+    search_request = models.ForeignKey(SearchRequest, on_delete=models.CASCADE, related_name='queries')
+    query_text = models.TextField() 
+    reduced_text_length = 1024
+    query_reduced = models.CharField(max_length=reduced_text_length, default='')
+    embedding = models.BinaryField(default=None)
+
+
+    def __str__(self):
+        return f"{self.query_text}"
+
+    class Meta:
+        # Additional options for the model
+        verbose_name = "Query"
+        verbose_name_plural = "Queries"
+
 
 
 def get_law_model():

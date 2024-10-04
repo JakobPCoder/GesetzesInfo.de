@@ -1,6 +1,17 @@
 
+import os
 import re
 
+from dotenv import dotenv_values
+import tiktoken
+
+# Get the directory of the current script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+env_path = os.path.join(parent_dir, '.env')
+
+# Load the environment variables
+env_vars = dotenv_values(env_path)
 
 def clear_text(query: str):
     # Strip whitespace and newlines from start and end
@@ -14,6 +25,16 @@ def clear_text(query: str):
     
     return query
 
+def clamp_text_to_tokens(text: str, max_tokens: int):
+    if len(text) > max_tokens:
+        encoding = tiktoken.encoding_for_model(env_vars.get('EMBEDDING_MODEL'))
+        encoded_text = encoding.encode(text)
+        num_tokens = len(encoded_text)
+        if num_tokens > max_tokens:
+            text = encoding.decode(encoded_text[:max_tokens])
+        return text
+    else:
+        return text
 
 
 def main():

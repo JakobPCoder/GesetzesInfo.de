@@ -41,13 +41,12 @@ def dummy_transform(old_law):
     }
 
 def process_laws():
-    # Fetch all OpenLegalDataLaw entries
-    cursor.execute('SELECT id, book_code, title, text FROM OpenLegalDataLaw')
-    old_laws = [{'id': row[0], 'book_code': row[1], 'title': row[2], 'text': row[3]} for row in cursor.fetchall()]
-
-    # Create the Law table if it doesn't exist
+    # Drop the existing Law table if it exists
+    cursor.execute('DROP TABLE IF EXISTS laws')
+    
+    # Create the Law table
     cursor.execute('''
-    CREATE TABLE IF NOT EXISTS laws (
+    CREATE TABLE laws (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         book_code TEXT,
         title TEXT,
@@ -56,11 +55,15 @@ def process_laws():
     )
     ''')
 
+    # Fetch all OpenLegalDataLaw entries
+    cursor.execute('SELECT id, book_code, title, text FROM OpenLegalDataLaw')
+    old_laws = [{'id': row[0], 'book_code': row[1], 'title': row[2], 'text': row[3]} for row in cursor.fetchall()]
+
     # Process each law and insert into the Law table with a loading bar
     for old_law in tqdm(old_laws, desc="Processing laws", unit="law"):
         new_law = dummy_transform(old_law)
         cursor.execute('''
-        INSERT OR REPLACE INTO laws (book_code, title, text, source_url)
+        INSERT INTO laws (book_code, title, text, source_url)
         VALUES (?, ?, ?, ?)
         ''', (new_law['book_code'], new_law['title'], 
               new_law['text'], new_law['source_url']))
@@ -68,11 +71,8 @@ def process_laws():
     # Commit the changes
     conn.commit()
 
-
-
 if __name__ == '__main__':
-
-    print("Processing laws...")
+    print("Recreating laws table and processing laws...")
     process_laws()
     print("Done")
 
