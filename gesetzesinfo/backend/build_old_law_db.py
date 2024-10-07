@@ -42,18 +42,18 @@ search_queries = [
     "Grundgesetz",
     "BGB",
     "StGB",
-    # "SGB",
-    # "HGB",
-    # "ZPO",
-    # "StPO",
-    # "StVO"
+    "SGB",
+    "HGB",
+    "ZPO",
+    "StPO",
+    "StVO"
 ]
 
 # Set a high max_results value
 max_results = 10000
 
 # Maximum number of concurrent tasks
-max_concurrent_tasks = 4
+max_concurrent_tasks = 6
 
 async def fetch_laws(query):
     loop = asyncio.get_event_loop()

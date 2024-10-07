@@ -40,6 +40,15 @@ def dummy_transform(old_law):
         'source_url': f'https://openlegaldata.io/laws/{old_law["id"]}/',
     }
 
+def filter_law(law):
+    title = law['title']
+    text = law['text']
+
+    if not title or not text or len(text) < 5 or ("(weggefallen)" in title.lower()) or ("(weggefallen)" in text.lower()):
+        return False
+
+    return True
+
 def process_laws():
     # Drop the existing Law table if it exists
     cursor.execute('DROP TABLE IF EXISTS laws')
@@ -62,6 +71,10 @@ def process_laws():
     # Process each law and insert into the Law table with a loading bar
     for old_law in tqdm(old_laws, desc="Processing laws", unit="law"):
         new_law = dummy_transform(old_law)
+
+        if not filter_law(new_law):
+            continue
+        
         cursor.execute('''
         INSERT INTO laws (book_code, title, text, source_url)
         VALUES (?, ?, ?, ?)
@@ -71,10 +84,15 @@ def process_laws():
     # Commit the changes
     conn.commit()
 
+    # print actual db length
+    cursor.execute('SELECT COUNT(*) FROM laws')
+    count = cursor.fetchone()[0]
+    print(f"Laws processed: {count}")
+    print(f"Removed laws: {len(old_laws) - count}")
+
 if __name__ == '__main__':
     print("Recreating laws table and processing laws...")
     process_laws()
-    print("Done")
 
 # Close the database connection
 conn.close()

@@ -122,7 +122,7 @@ export function Search() {
 
     const updateLawCount = async () => {
         try {
-            const response = await fetch(`http://${encodeURIComponent(API_DOMAIN)}:${encodeURIComponent(BACKEND_PORT)}/api/laws/count_raw/`);
+            const response = await fetch(`http://${encodeURIComponent(API_DOMAIN)}:${encodeURIComponent(BACKEND_PORT)}/api/laws/count/`);
             if (!response.ok) {
                 throw new Error('Failed to fetch law count');
             }

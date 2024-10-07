@@ -13,6 +13,12 @@ env_path = os.path.join(parent_dir, '.env')
 # Load the environment variables
 env_vars = dotenv_values(env_path)
 
+
+def lerp(a, b, t):
+    return a + t * (b - a)
+
+
+
 def clear_text(query: str):
     # Strip whitespace and newlines from start and end
     query = query.strip()

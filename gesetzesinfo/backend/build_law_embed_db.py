@@ -26,6 +26,9 @@ env_path = os.path.join(parent_dir, '.env')
 env_vars = dotenv_values(env_path)
 
 
+REBUILD = True
+
+
 # Check if OPENAI_API_KEY is in the loaded variables
 if 'OPENAI_API_KEY' in env_vars:
     api_key = env_vars['OPENAI_API_KEY']
@@ -58,7 +61,7 @@ def law_to_text(law: dict) -> str:
     text = f"Gesetz: {law['title']}\n\nGesetzbuch: {law['book_code']}\n\nText: {law['text']}"
     
     if not text:
-        text = "Empty law text";
+        text = "Text nicht vorhanden :("
 
     return text
 
@@ -87,6 +90,7 @@ def embed_laws(laws: List[dict]) -> List[dict]:
     max_tokens = int(env_vars.get('EMBEDDING_MODEL_MAX_TOKENS', 8191))
     combined_texts = [clamp_text_to_tokens(law_to_text(law), max_tokens) for law in laws]
 
+    
     response = OpenAI(api_key=api_key).embeddings.create(
         model=env_vars.get('EMBEDDING_MODEL'),
         input=combined_texts,
@@ -112,7 +116,8 @@ def embed_laws(laws: List[dict]) -> List[dict]:
 def create_embedded_laws_table():
     # Drop the existing table if it exists
     
-    cursor.execute('DROP TABLE IF EXISTS embedded_laws')
+    if REBUILD:
+        cursor.execute('DROP TABLE IF EXISTS embedded_laws')
     
     # Create the new table
     cursor.execute('''
@@ -197,8 +202,6 @@ def process_new_laws():
      
             embedded_laws = embed_laws(laws)
 
-            print("dimensions", len(embedded_laws[0]['embedding']))
-
             # Prepare and insert data
             valid_data = [
                 (law['id'], law['book_code'], law['title'], law['text'], law['source_url'], np.array(law['embedding']).astype(np.float32).tobytes())
@@ -238,6 +241,8 @@ def build_vector_db():
     cursor.execute('SELECT id, embedding FROM embedded_laws')
     results = cursor.fetchall()
 
+    print(f"Found {len(results)} embedded laws in the database.")
+
     if not results:
         print("No embedded laws found in the database.")
         return
@@ -269,7 +274,7 @@ def build_vector_db():
     print(f"Index total after adding: {id_map.ntotal}")
 
 
-    faiss.write_index(id_map, 'law_vector_db.faiss')
+    faiss.write_index(id_map, os.path.join(current_dir, 'law_vector_db.faiss')) 
 
     print(f"Vector database built and saved with {len(ids)} laws.")
 
