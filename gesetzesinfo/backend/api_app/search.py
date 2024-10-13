@@ -16,7 +16,7 @@ from together import Together
 import faiss
 import numpy as np
 
-from .models import SearchRequest, SearchQuery, EmbeddedLaw
+from .models import SearchRequest, SearchQuery, EmbeddedLaw, SearchResponse
 from .util import clear_text, clamp_text_to_tokens, lerp
 
 from django.db.models import Q, QuerySet
@@ -30,6 +30,8 @@ from functools import partial
 env_vars = dotenv_values()
 print(env_vars.get('OPENAI_API_KEY'))
 
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+faiss_db_path = os.path.join(parent_dir, 'law_vector_db.faiss')
 
 def query_to_keywords(query: str):
     """
@@ -77,15 +79,15 @@ def query_to_keywords_llm(query: str, max_keywords: int = 32):
     Keywords: ["Diebstahl", "Raub", "entwenden", "entwendet", "Entwendung", "wegnimmt", "Wegnahme", "Besitz", "Eigentum"]
 
     Suchanfrage: "Artikel 19"
-    Keywords: ["Artikel 19", "Grundgesetz 19", "Artikel", "Grundgesetz"]
+    Keywords: ["Artikel 19", "Grundgesetz 19", "Artikel"]
 
     Suchanfrage: "fahrerflucht"
-    Keywords: ["Fahrerflucht", "Flucht", "Unfall", "Fahrer", "wegfahren", "entfernen", "stvo"]
+    Keywords: ["Fahrerflucht", "Flucht", "Unfall", "Fahrer, "Hilfe"", "wegfahren", "entfernen", "Hilfe" "stvo"]
 
     Suchanfrage: "was ist mord"
-    Keywords: ["Mord", "Mörder", "Töten", "tötet", "Totschlag", "Körperverletzung", "Todesfolge"]
+    Keywords: ["Mord", "Mörder", "Töten", "tötet", "Totschlag", "Körperverletzung", "Todesfolge", "tot"]
 
-    Extrahieren sie nun die 1 bis {max_keywords} relevanten Keywords.
+    Extrahieren sie die 1 bis {max_keywords} relevanten Keywords.
     Geben sie die Keywords als JSON Object zurück, das ein Feld "keywords" hat, welches ein Array von Strings ist.
     """
 
@@ -159,6 +161,7 @@ def get_embedding(text: str):
 
 
 def calculate_keyword_score(law: EmbeddedLaw, keywords: list):
+
     title = law.title
     text = law.text
     title_word_count = len(title.split())
@@ -168,9 +171,9 @@ def calculate_keyword_score(law: EmbeddedLaw, keywords: list):
     text_keyword_count = sum(keyword.lower() in text.lower() for keyword in keywords)
     keyword_occurrences = sum(text.lower().count(keyword.lower()) for keyword in keywords)
 
-    title_score_unique = (title_keyword_count) / title_word_count if title_keyword_count > 0 else 0.0
-    text_score_unique = (text_keyword_count) if text_keyword_count > 0 else 0.0
-    text_score_total = (keyword_occurrences) if keyword_occurrences > 0 else 0.0
+    title_score_unique = (title_keyword_count / title_word_count) if title_keyword_count > 0 else 0.0
+    text_score_unique = (text_keyword_count / text_word_count) if text_keyword_count > 0 else 0.0
+    text_score_total = (keyword_occurrences / text_word_count) if keyword_occurrences > 0 else 0.0
 
     score = ((title_score_unique * 5) + (text_score_unique * 0.3) + (text_score_total * 0.1)) / len(keywords)
 
@@ -207,6 +210,7 @@ def multi_keyword_search(keywords: list, max_results: int = 64):
     return results
 
 def rerate_keyword_search_results(keyword_search_results: List[dict], query_embedding: np.array) -> List[dict]:
+
     """
     Re-rates the keyword search results by comparing their embeddings to the query embedding.
 
@@ -218,6 +222,8 @@ def rerate_keyword_search_results(keyword_search_results: List[dict], query_embe
     Returns:
     List[dict]: The re-rated keyword search results.
     """
+    if not keyword_search_results:
+        return []
 
     # Get the embeddings for the keyword search results
     relevant_laws = EmbeddedLaw.objects.filter(law_id__in=[result['law_id'] for result in keyword_search_results])
@@ -233,7 +239,7 @@ def rerate_keyword_search_results(keyword_search_results: List[dict], query_embe
     index.add_with_ids(np.array(embeddings, dtype=np.float32), np.array([law.law_id for law in relevant_laws]))
 
     # search
-    distances, ids = index.search(np.array([query_embedding], dtype=np.float32), embedding_count)
+    distances, _ = index.search(np.array([query_embedding], dtype=np.float32), embedding_count)
 
     # Calculate the scores
     scores = [1 / (1 + distance) for distance in distances[0]]
@@ -241,8 +247,8 @@ def rerate_keyword_search_results(keyword_search_results: List[dict], query_embe
     # Combine the scores with the keyword search results
     results = [{'law_id': law.law_id, 'score': score} for law, score in zip(relevant_laws, scores)]
 
-    # Sort the results by score and limit to max_results
-    results = sorted(results, key=lambda x: x['score'], reverse=True)
+    # # Sort the results by score and limit to max_results
+    # results = sorted(results, key=lambda x: x['score'], reverse=True)
 
     return results
 
@@ -257,9 +263,6 @@ def natural_language_search(embedding: np.array, max_results: int = 64) -> List[
     Returns:
     list: A list of dictionaries containing the law_id and score for each matching law.
     """
-
-    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    faiss_db_path = os.path.join(parent_dir, 'law_vector_db.faiss')
     vector_index = faiss.read_index(faiss_db_path)
 
     # Get the nearest neighbors
@@ -436,49 +439,87 @@ def smart_search(query: str, max_results: int = 32) -> dict:
     # Re-rate the keyword search results based on their embeddings
     keyword_search_results = rerate_keyword_search_results(keyword_search_results, query_embedding)
 
-
     # Combine natural language search results and keyword search results
     search_results = nl_search_results + keyword_search_results 
 
-    # Convert search results to output format
-    output = search_results_to_output(search_results)
+    # Create a dictionary to map law_id to score
+    score_map = {result['law_id']: result['score'] for result in search_results}
 
-    # Return the search results in a dictionary
-    return output
+    # Get the laws based on law_ids
+    law_ids = [result['law_id'] for result in search_results]
+    laws = EmbeddedLaw.objects.filter(law_id__in=law_ids)
+
+    # Prepare the final results
+    final_results = []
+    for law in laws:
+        final_results.append({
+            'id': law.id,
+            'title': law.title,
+            'text': law.text,
+            'score': score_map.get(law.law_id, 0), 
+            'query_id': search_query.id
+        })
+
+    # Sort the final results by score in descending order
+    final_results.sort(key=lambda x: x['score'], reverse=True)
+
+    # add show_id counting fro m1 upwards to all elements
+    for i, result in enumerate(final_results):
+        result['show_id'] = i + 1
+
+
+    # crate search result
+    try:
+        search_response = SearchResponse.objects.create(
+            search_query=search_query,
+        )
+        search_response.laws.set(laws)
+        search_response.save()
+    except Exception as e:
+        print(e)
+
+    
+    return final_results
 
 
 
-
-
-def search_endpoint(request):
+def search_endpoint(request: HttpRequest) -> JsonResponse:
     """
-    This function is used to search for a query in the database.
+    Search for a query in the database.
 
     Parameters:
-    request (HttpRequest): The HTTP request object containing the query parameter.
+    request (HttpRequest): The HTTP request with the following query parameter:
+        q (str): The search query
 
     Returns:
-    JsonResponse: A JSON response containing the search results or an error message.
+    JsonResponse: A JSON response containing the search results or an error message
     """
-    query = request.GET.get('q', '')
+    # Get the query parameter from the request
+    query: str = request.GET.get('q', None)
+
+    # Validate the query parameter
+    if not query:
+        return JsonResponse({'error': 'q is required'}, status=400)
+
+    # Clear the query text
     query = clear_text(query)
 
-    response = {
-        'query': query,
-    }
+    # To Lower Case
+    query = query.lower()
 
-    min_query_length = 3
+    # Check the minimum query length
+    min_query_length = 4
+    if len(query) < min_query_length:
+        return JsonResponse({'error': f'Die Anfrage muss mindestens {min_query_length} Zeichen lang sein.'}, status=200)
 
-    # Check if a query is provided
-    if not query:
-        response["error"] = "Please enter a search query"
-        return JsonResponse(response, status=400)
+    try:
+        # Perform the search
+        results = smart_search(query)
+    except Exception as e:
+        return JsonResponse({'error': f"Error searching for query: {str(e)}"}, status=400)
+    
+    if not results:
+        return JsonResponse({'error': 'Keine Ergebnisse gefunden.'}, status=200)
 
-    elif len(query) < min_query_length:
-        response["error"] = f"Please enter at least {min_query_length} characters"
-        return JsonResponse(response)
-
-    response["results"] = smart_search(query)
-
-    # Return the response as a dict to avoid setting `safe=False`
-    return JsonResponse(response)
+    # Return the search results
+    return JsonResponse({'query': query, 'results': results}, status=200)

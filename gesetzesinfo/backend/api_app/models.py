@@ -168,7 +168,7 @@ class EmbeddedLaw(models.Model):
     id = models.AutoField(primary_key=True)
 
     # This was the id used in tha Laws table
-    law_id = models.IntegerField()
+    law_id = models.IntegerField(unique=True)
 
     # This was the book used on the openlegaldata api
     book_code = models.CharField(max_length=100)
@@ -211,12 +211,14 @@ class EmbeddedLaw(models.Model):
     def get_as_text(self):
         return f"Gesetz: {self.title}\n\nGesetzbuch: {self.book_code}\n\nText: {self.text}"
 
-    def get_embedding_base(self):
+    def get_embedding_base(self) -> np.ndarray:
+        """Returns the base embedding as a numpy array."""
         return np.frombuffer(self.embedding_base, dtype=np.float32)
     
-    def get_embedding_optimized(self):
+    def get_embedding_optimized(self) -> np.ndarray:
+        """Returns the optimized embedding as a numpy array."""
         return np.frombuffer(self.embedding_optimized, dtype=np.float32)
-
+    
     def __str__(self):
         return f"{self.title}"
     
@@ -251,6 +253,7 @@ class SearchQuery(models.Model):
     query_text = models.TextField(default='', unique=True) 
     query_reduced = models.CharField(max_length=reduced_text_length, default='')
     embedding = models.BinaryField(default=None)
+    created_at = models.DateTimeField(auto_now=True)
 
     def get_embedding(self):
         if self.embedding:
@@ -265,6 +268,20 @@ class SearchQuery(models.Model):
         # Additional options for the model
         verbose_name = "Query"
         verbose_name_plural = "Queries"
+
+
+
+
+class SearchResponse(models.Model):
+    id = models.AutoField(primary_key=True)
+    search_query = models.ForeignKey(SearchQuery, on_delete=models.CASCADE, related_name='responses')
+    laws = models.ManyToManyField(EmbeddedLaw, related_name='search_results')
+    created_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        # Additional options for the model
+        verbose_name = "Search Response"
+        verbose_name_plural = "Search Responses"
 
 
 

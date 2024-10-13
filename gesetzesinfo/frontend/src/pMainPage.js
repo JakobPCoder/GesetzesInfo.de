@@ -155,12 +155,12 @@ export function Search() {
                     throw new Error(data.error);
                 }
                 if (data && Array.isArray(data.results)) {
-                    const validItems = data.results.filter(item => item.id && item.title && item.text && (item.score !== undefined && item.score !== null));
+                    const validItems = data.results.filter(item => item.show_id && item.id && item.title && item.text && item.query_id && (item.score !== undefined && item.score !== null));
                     if (validItems.length === 0) {
                         throw new Error('No results found');
                     } else {
-                        const replaceIds = (items) => items.map((item, idx) => ({ ...item, id: idx + 1 }));
-                        setItems(replaceIds(validItems));
+                        
+                        setItems(validItems);
                         setError(null);
                     }
                 } else {
@@ -179,11 +179,20 @@ export function Search() {
             <SearchHeader count={lawCount}/>
             <TextEntryContainer text={text} setText={setText} />
             <Button text="Suchen" onClick={handleClick} />
-            <ItemList items={items} error={error} query = {text} /> {/* Pass the items to ItemList */}
+            <ItemList items={items} error={error} /> {/* Pass the items to ItemList */}
         </div>
     );
 }
 
+/**
+ * The main page component of the application.
+ * 
+ * This component renders the main page of the application, which includes the title, slogan, intro, disclaimer, and search functionality.
+ * The search functionality is wrapped in a VerticalLayout component, which is then wrapped in a VerticalPad component.
+ * The VerticalPad component adds some padding above and below the search functionality.
+ * The Footer component is rendered below the search functionality.
+ * The entire page is wrapped in a container div with a horizontal layout, which includes placeholders for the left and right sides of the page.
+ */
 const MainPage = () => {
     return (
         <div className="container">

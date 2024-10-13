@@ -5,6 +5,7 @@ from django.http import HttpRequest
 from . import openlegaldata
 from .models import  OldTitleKeyword, Law, EmbeddedLaw
 from .search import search_endpoint
+from .rating import rating_endpoint
 
 def unprocessed_law_count(request):
     try:
@@ -30,3 +31,10 @@ def old_keywords_count(request):
 
 def search(request):
     return search_endpoint(request)
+
+
+def rate(request):
+    try:
+        return rating_endpoint(request)
+    except Exception as e:
+        return JsonResponse({'error': str(e)})

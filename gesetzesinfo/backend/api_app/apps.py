@@ -11,13 +11,14 @@ class ApiAppConfig(AppConfig):
     load_dotenv()
 
     def ready(self):
-        try:
+        # try:
  
-            if getattr(settings, 'USE_TEST_DB', False):
-                from .processing import populate_law_db
-                populate_law_db()
+        #     if getattr(settings, 'USE_TEST_DB', False):
+        #         from .processing import populate_law_db
+        #         populate_law_db()
 
-        except (OperationalError, ProgrammingError):
-            # Handle the case where the table doesn't exist yet
-            pass
+        # except (OperationalError, ProgrammingError):
+        #     # Handle the case where the table doesn't exist yet
+        #     pass
+        pass
         

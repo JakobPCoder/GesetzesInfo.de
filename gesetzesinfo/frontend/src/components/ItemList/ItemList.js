@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ListItem from './ListItem';
 import './ItemList.css';
 
-function ItemList({ items, error, query}) {
+function ItemList({ items, error}) {
+
+    useEffect(() => {
+        // Re-render the list whenever the items prop changes
+    }, [items]);
+
     return (
         <div className="item-list-container">
             <div className="list-header">
@@ -14,12 +19,13 @@ function ItemList({ items, error, query}) {
             {items.length > 0 ? (
                 items.map(item => (
                     <ListItem
-                        key={item.id}
+                        key={String(item.query_id) + String(item.id)}
                         id={item.id}
                         title={item.title}
                         text={item.text}
-                        query={query}
                         score={item.score}
+                        query_id={item.query_id}
+                        show_id={item.show_id}
                     />
                 ))
             ) : (

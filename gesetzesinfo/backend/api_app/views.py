@@ -18,9 +18,14 @@ from django.views.decorators.csrf import csrf_exempt
 
 from . import endpoints
 
+
 @csrf_exempt
 def search(request):
     return endpoints.search(request)
+
+@csrf_exempt
+def rate(request):
+    return endpoints.rate(request)
 
 def law_count(request):
     return endpoints.law_count(request) 

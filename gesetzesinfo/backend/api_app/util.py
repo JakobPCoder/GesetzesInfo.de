@@ -17,6 +17,8 @@ env_vars = dotenv_values(env_path)
 def lerp(a, b, t):
     return a + t * (b - a)
 
+def clamp(value, min_value, max_value):
+    return min(max(value, min_value), max_value)
 
 
 def clear_text(query: str):

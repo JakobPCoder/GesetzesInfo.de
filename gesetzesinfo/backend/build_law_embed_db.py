@@ -90,7 +90,6 @@ def embed_laws(laws: List[dict]) -> List[dict]:
     max_tokens = int(env_vars.get('EMBEDDING_MODEL_MAX_TOKENS', 8191))
     combined_texts = [clamp_text_to_tokens(law_to_text(law), max_tokens) for law in laws]
 
-    
     response = OpenAI(api_key=api_key).embeddings.create(
         model=env_vars.get('EMBEDDING_MODEL'),
         input=combined_texts,
@@ -204,13 +203,13 @@ def process_new_laws():
 
             # Prepare and insert data
             valid_data = [
-                (law['id'], law['book_code'], law['title'], law['text'], law['source_url'], np.array(law['embedding']).astype(np.float32).tobytes())
+                ( law['book_code'], law['title'], law['text'], law['source_url'], np.array(law['embedding']).astype(np.float32).tobytes())
                 for law in embedded_laws
             ]
 
             cursor.executemany('''
-            INSERT INTO embedded_laws (law_id, book_code, title, text, source_url, embedding)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO embedded_laws (book_code, title, text, source_url, embedding)
+            VALUES (?, ?, ?, ?, ?)
             ''', valid_data)
 
             conn.commit()
